@@ -1,10 +1,11 @@
 import os
 import json
+import requests
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import websocket
-#from socketIO_client import SocketIO
+# from socketIO_client import SocketIO
 
 from tornado.options import define, options, parse_command_line
 
@@ -19,6 +20,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/home/", HomeHandler),
+            (r"/telegram/", TelegramHandler),
             (r"/send_message/", SendMessageHandler),
             (r"/", IndexHandler),
             (r"/ws/", WebSocketHandler),
@@ -53,6 +55,32 @@ class HomeHandler(tornado.web.RequestHandler):
     def get(self):
         self.render('templates/home.html')
 
+
+class TelegramHandler(tornado.web.RequestHandler):
+    """
+    https://api.telegram.org/bot[BOT_API_KEY]/sendMessage?chat_id=[MY_CHANNEL_NAME]&text=[MY_MESSAGE_TEXT]
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.BOT_API_KEY = '517737139:AAHaPhhzg5fxPz3tL2cAUmU19Y_ez0lQ4VI'
+        self.MY_CHANNEL_NAME = '@yltnews'
+        self.url = 'https://api.telegram.org/bot{}/sendMessage?'.format(self.BOT_API_KEY)
+        self.message = []
+
+    @tornado.web.asynchronous
+    def get(self):
+        self.render('templates/telegram.html')
+
+    def post(self, *args, **kwargs):
+        self.message = self.request.body_arguments.get('tg-message')
+        r = requests.get(url=self.url,
+                         params={'chat_id': self.MY_CHANNEL_NAME,
+                                 'text': self.message[0].decode()})
+        if r.status_code != 200:
+            print('error when sending messsage to Telegram Channel')
+            return False
+        self.render('templates/telegram.html')
 
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous

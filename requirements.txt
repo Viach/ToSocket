@@ -1,1 +1,14 @@
+certifi==2017.11.5
+chardet==3.0.4
+gevent==1.2.2
+greenlet==0.4.12
+idna==2.6
+python-engineio-client==1.1
+python-socketio-client==1.1
+requests==2.18.4
+six==1.11.0
+socketIO-client==0.7.2
+socketIO-client3==0.8.0
 tornado==4.5.3
+urllib3==1.22
+websocket-client==0.46.0
