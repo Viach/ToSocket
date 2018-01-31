@@ -67,6 +67,7 @@ class TelegramHandler(tornado.web.RequestHandler):
         self.MY_CHANNEL_NAME = '@yltnews'
         self.url = 'https://api.telegram.org/bot{}/sendMessage?'.format(self.BOT_API_KEY)
         self.message = []
+        self.about_bot = ''
 
     @tornado.web.asynchronous
     def get(self):
@@ -80,7 +81,10 @@ class TelegramHandler(tornado.web.RequestHandler):
         if r.status_code != 200:
             print('error when sending messsage to Telegram Channel')
             return False
-        self.render('templates/telegram.html')
+        self.about_bot = requests.get(url='https://api.telegram.org/bot{}/getMe'.format(self.BOT_API_KEY),)
+
+        self.render('templates/telegram.html',
+                     )
 
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
